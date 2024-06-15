@@ -3,6 +3,8 @@ const dotenv = require('dotenv');
 const request = require('request');
 const querystring = require('querystring');
 const cookieParser = require('cookie-parser');
+const mongoose = require('mongoose');
+const jwt = require('jsonwebtoken');
 
 dotenv.config();
 
@@ -14,6 +16,22 @@ app.use(cookieParser());
 const client_id = process.env.SPOTIFY_CLIENT_ID;
 const client_secret = process.env.SPOTIFY_CLIENT_SECRET;
 const redirect_uri = process.env.REDIRECT_URI || 'http://localhost:3001/callback';
+const jwtSecret = process.env.JWT_SECRET;
+
+mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true });
+
+const jwtSchema = new mongoose.Schema({
+    token: {
+        type: String,
+        required: true,
+    },
+    expiry: {
+        type: Date,
+        required: true,
+    },
+});
+
+const JWT = mongoose.model('JWT', jwtSchema);
 
 const generateRandomString = length => {
     let text = '';
@@ -85,10 +103,29 @@ app.get('/callback', (req, res) => {
                     console.log(body);
                 });
 
+                // Generate JWT
+                const token = jwt.sign({ access_token }, jwtSecret, { expiresIn: '1h' });
+
+                // Save JWT to database
+                const expiryDate = new Date();
+                expiryDate.setHours(expiryDate.getHours() + 1);
+
+                const jwtDoc = new JWT({
+                    token: token,
+                    expiry: expiryDate
+                });
+
+                jwtDoc.save().then(() => {
+                    console.log('JWT saved to database');
+                }).catch(err => {
+                    console.error('Error saving JWT:', err);
+                });
+
                 res.redirect('/#' +
                     querystring.stringify({
                         access_token: access_token,
-                        refresh_token: refresh_token
+                        refresh_token: refresh_token,
+                        jwt: token
                     }));
             } else {
                 res.redirect('/#' +
