@@ -7,6 +7,9 @@ This project is a Spotify integration application designed to allow users to sea
 - User authentication with JWT
 - Persistent login using JWT stored in the database
 - Search functionality for songs, albums, and artists
+- Fetch user's playlists
+- Fetch user's top tracks
+- Fetch user's recently played tracks
 - "No results" message if the search yields no results
 - Thumbnails linking to Spotify web player
 
@@ -32,7 +35,7 @@ cd spotify-integration
 ## Install Dependencies
 ```sh
 npm install
-npm install express dotenv mongoose jsonwebtoken cookie-parser request
+npm install express dotenv mongoose jsonwebtoken cookie-parser body-parser request
 ```
 
 ## Set Up Environment Variables
@@ -64,3 +67,7 @@ npm start
 - Login: `http://localhost:3001/login` (Initiates Spotify login)
 - Callback: `http://localhost:3001/callback` (Spotify redirects here after login)
 - Search: `http://localhost:3001/search?q=your_search_query` (Replace your_search_query with the search term)
+- Playlists: `http://localhost:3001/playlists` (Fetch user's playlists)
+- Top Tracks: `http://localhost:3001/top-tracks` (Fetch user's top tracks)
+- Recently Played: `http://localhost:3001/recently-played` (Fetch user's recently played tracks)
+
