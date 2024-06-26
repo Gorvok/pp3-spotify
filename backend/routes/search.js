@@ -1,29 +1,8 @@
 const express = require('express');
 const request = require('request');
-const jwt = require('jsonwebtoken');
+const verifyJWT = require('../middlewares/verifyJWT');
 
 const router = express.Router();
-const jwtSecret = process.env.JWT_SECRET;
-
-// Verify JWT Middleware
-const verifyJWT = (req, res, next) => {
-    const authHeader = req.header('Authorization');
-
-    if (!authHeader) {
-        return res.status(401).send({ error: 'Authorization header missing' });
-    }
-
-    const token = authHeader.replace('Bearer ', '');
-
-    jwt.verify(token, jwtSecret, (err, decoded) => {
-        if (err) {
-            return res.status(401).send({ error: 'Unauthorized' });
-        }
-
-        req.user = decoded;
-        next();
-    });
-};
 
 // Search Endpoint
 router.get('/search', verifyJWT, (req, res) => {
