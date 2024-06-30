@@ -1,0 +1,25 @@
+body {
+  font-family: Arial, sans-serif;
+}
+
+.login-container {
+  text-align: center;
+  margin-top: 100px;
+}
+
+.login-container button {
+  padding: 10px 20px;
+  font-size: 16px;
+}
+
+.dashboard {
+  padding: 20px;
+}
+
+.playlists, .top-tracks, .recently-played {
+  margin-bottom: 20px;
+}
+
+h1, h2 {
+  color: #1DB954; /* Spotify Green */
+}

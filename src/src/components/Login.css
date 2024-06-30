@@ -1,0 +1,35 @@
+.login-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    text-align: center;
+    background-color: #000000;
+    color: #ffffff;
+}
+
+.spotify-logo {
+    width: 500px;
+    margin-bottom: 20px;
+}
+
+.login-container h1 {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+}
+
+.login-container p {
+    font-size: 1.2rem;
+    margin-bottom: 1rem;
+}
+
+.login-container button {
+    padding: 10px 20px;
+    font-size: 1rem;
+    background-color: #1DB954; /* Spotify Green */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}

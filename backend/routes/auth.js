@@ -22,6 +22,7 @@ const generateRandomString = length => {
 };
 
 const stateKey = 'spotify_auth_state';
+const tempStateKey = 'temp_state';
 
 // Authorization Request
 router.get('/login', (req, res) => {
@@ -84,16 +85,16 @@ router.get('/callback', (req, res) => {
 
                 jwtDoc.save().then(() => {
                     console.log('JWT saved to database');
+                    const tempState = generateRandomString(16);
+                    res.cookie(tempStateKey, tempState, { httpOnly: true });
+                    res.redirect(`http://localhost:3000/?tempState=${tempState}&jwt=${token}`);
                 }).catch(err => {
                     console.error('Error saving JWT:', err);
+                    res.redirect('/#' +
+                        querystring.stringify({
+                            error: 'token_save_error'
+                        }));
                 });
-
-                res.redirect('/#' +
-                    querystring.stringify({
-                        access_token: access_token,
-                        refresh_token: refresh_token,
-                        jwt: token
-                    }));
             } else {
                 res.redirect('/#' +
                     querystring.stringify({
@@ -104,28 +105,40 @@ router.get('/callback', (req, res) => {
     }
 });
 
-// Token Refresh
-router.get('/refresh_token', (req, res) => {
-    const refresh_token = req.query.refresh_token;
-    const authOptions = {
-        url: 'https://accounts.spotify.com/api/token',
-        headers: { 'Authorization': 'Basic ' + (new Buffer.from(client_id + ':' + client_secret).toString('base64')) },
-        form: {
-            grant_type: 'refresh_token',
-            refresh_token: refresh_token
-        },
-        json: true
-    };
+// Endpoint to fetch tokens using temp state
+router.get('/get-tokens', (req, res) => {
+    const tempState = req.query.tempState || null;
+    const storedTempState = req.cookies ? req.cookies[tempStateKey] : null;
 
-    request.post(authOptions, (error, response, body) => {
-        if (!error && response.statusCode === 200) {
-            const access_token = body.access_token;
-            res.send({
-                'access_token': access_token
-            });
-        } else {
-            res.status(response.statusCode).send(body);
+    if (tempState === null || tempState !== storedTempState) {
+        return res.status(400).json({ error: 'state_mismatch' });
+    }
+
+    res.clearCookie(tempStateKey);
+
+    // Retrieve JWT from database
+    JWT.findOne({ token: req.query.jwt }).then(jwtDoc => {
+        if (!jwtDoc) {
+            return res.status(400).json({ error: 'invalid_token' });
         }
+        res.json({
+            access_token: jwtDoc.token,
+            refresh_token: jwtDoc.refresh_token,
+        });
+    }).catch(err => {
+        console.error('Error retrieving JWT from database:', err);
+        res.status(500).json({ error: 'server_error' });
+    });
+});
+
+// Endpoint to validate the token
+router.get('/validate-token', (req, res) => {
+    const token = req.headers.authorization.split(' ')[1];
+    jwt.verify(token, jwtSecret, (err, decoded) => {
+        if (err) {
+            return res.status(401).json({ valid: false, message: 'Invalid token' });
+        }
+        res.json({ valid: true, decoded });
     });
 });
 

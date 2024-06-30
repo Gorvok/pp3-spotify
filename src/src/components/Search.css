@@ -1,0 +1,45 @@
+.search-container {
+    padding: 20px;
+    text-align: center;
+}
+
+.search-container h1 {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+}
+
+.search-container form {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 1rem;
+}
+
+.search-container input {
+    padding: 10px;
+    font-size: 1rem;
+    width: 300px;
+    margin-right: 10px;
+}
+
+.search-container button {
+    padding: 10px 20px;
+    font-size: 1rem;
+    background-color: #1DB954; /* Spotify Green */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.results-container {
+    margin-top: 20px;
+}
+
+.result-item {
+    margin-bottom: 10px;
+}
+
+.result-item a {
+    color: #1DB954; /* Spotify Green */
+    text-decoration: none;
+}

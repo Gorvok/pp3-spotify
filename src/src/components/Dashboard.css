@@ -1,0 +1,20 @@
+.dashboard {
+    padding: 20px;
+    text-align: center;
+}
+
+.dashboard h1 {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+}
+
+.dashboard a {
+    display: inline-block;
+    margin-bottom: 1rem;
+    color: #1DB954; /* Spotify Green */
+    text-decoration: none;
+}
+
+.playlists, .top-tracks, .recently-played {
+    margin-bottom: 20px;
+}
