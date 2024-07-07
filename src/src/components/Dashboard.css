@@ -1,0 +1,120 @@
+body {
+    background-color: #121212;
+    color: white;
+    font-family: Arial, sans-serif;
+}
+
+.dashboard {
+    padding: 20px;
+}
+
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background-color: #1db954;
+    position: relative;
+}
+
+.spotify-logo {
+    position: absolute;
+    left: 20px;
+    width: 40px;
+    height: 40px;
+}
+
+.search-bar {
+    display: flex;
+    align-items: center;
+    border-bottom: 2px solid white;
+    padding: 5px;
+}
+
+.search-icon {
+    color: white;
+    margin-right: 10px;
+}
+
+.search-bar input {
+    background: transparent;
+    border: none;
+    color: white;
+    font-size: 16px;
+    padding: 10px 0;
+    outline: none;
+    width: 300px;
+}
+
+.search-results {
+    margin-top: 20px;
+}
+
+.results-section {
+    margin-bottom: 20px;
+}
+
+.results-section h3 {
+    font-size: 24px;
+    margin-bottom: 10px;
+}
+
+.cards {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.card {
+    width: 150px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    overflow: hidden;
+    text-align: center;
+    background-color: #333;
+    color: white;
+    transition: transform 0.2s;
+}
+
+.card:hover {
+    transform: scale(1.05);
+}
+
+.card img {
+    width: 100%;
+    height: 150px;
+    object-fit: cover;
+}
+
+.card div {
+    padding: 10px;
+}
+
+.card a {
+    color: white;
+    text-decoration: none;
+}
+
+.card a:hover {
+    text-decoration: none;
+}
+
+.no-results {
+    margin-top: 20px;
+    text-align: center;
+}
+
+.playlists, .top-tracks, .recently-played {
+    margin-bottom: 20px;
+}
+
+.playlists h2, .top-tracks h2, .recently-played h2 {
+    margin-bottom: 10px;
+    font-size: 24px;
+}
+
+.playlists .cards, .top-tracks .cards, .recently-played .cards {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+}

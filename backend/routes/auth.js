@@ -84,16 +84,14 @@ router.get('/callback', (req, res) => {
 
                 jwtDoc.save().then(() => {
                     console.log('JWT saved to database');
+                    res.redirect(`http://localhost:3000/?jwt=${token}&access_token=${access_token}&refresh_token=${refresh_token}`);
                 }).catch(err => {
                     console.error('Error saving JWT:', err);
+                    res.redirect('/#' +
+                        querystring.stringify({
+                            error: 'token_save_error'
+                        }));
                 });
-
-                res.redirect('/#' +
-                    querystring.stringify({
-                        access_token: access_token,
-                        refresh_token: refresh_token,
-                        jwt: token
-                    }));
             } else {
                 res.redirect('/#' +
                     querystring.stringify({
@@ -104,28 +102,14 @@ router.get('/callback', (req, res) => {
     }
 });
 
-// Token Refresh
-router.get('/refresh_token', (req, res) => {
-    const refresh_token = req.query.refresh_token;
-    const authOptions = {
-        url: 'https://accounts.spotify.com/api/token',
-        headers: { 'Authorization': 'Basic ' + (new Buffer.from(client_id + ':' + client_secret).toString('base64')) },
-        form: {
-            grant_type: 'refresh_token',
-            refresh_token: refresh_token
-        },
-        json: true
-    };
-
-    request.post(authOptions, (error, response, body) => {
-        if (!error && response.statusCode === 200) {
-            const access_token = body.access_token;
-            res.send({
-                'access_token': access_token
-            });
-        } else {
-            res.status(response.statusCode).send(body);
+// Endpoint to validate the token
+router.get('/validate-token', (req, res) => {
+    const token = req.headers.authorization.split(' ')[1];
+    jwt.verify(token, jwtSecret, (err, decoded) => {
+        if (err) {
+            return res.status(401).json({ valid: false, message: 'Invalid token' });
         }
+        res.json({ valid: true, decoded });
     });
 });
 
