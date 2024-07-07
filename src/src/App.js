@@ -13,20 +13,17 @@ function App() {
     const checkAuth = async () => {
       try {
         let token = localStorage.getItem('token');
-        const tempState = new URLSearchParams(window.location.search).get('tempState');
         const jwt = new URLSearchParams(window.location.search).get('jwt');
+        const accessToken = new URLSearchParams(window.location.search).get('access_token');
+        const refreshToken = new URLSearchParams(window.location.search).get('refresh_token');
 
-        if (tempState && jwt) {
-          // Fetch tokens using tempState and jwt
-          const response = await axios.get(`http://localhost:3001/get-tokens?tempState=${tempState}&jwt=${jwt}`);
-          const { access_token, refresh_token, jwt: fetchedToken } = response.data;
-
+        if (jwt && accessToken && refreshToken) {
           // Store tokens in local storage
-          localStorage.setItem('access_token', access_token);
-          localStorage.setItem('refresh_token', refresh_token);
-          localStorage.setItem('token', fetchedToken);
-          token = fetchedToken;
-          window.history.replaceState({}, document.title, "/"); // Remove tempState and jwt from URL
+          localStorage.setItem('access_token', accessToken);
+          localStorage.setItem('refresh_token', refreshToken);
+          localStorage.setItem('token', jwt);
+          token = jwt;
+          window.history.replaceState({}, document.title, "/"); // Remove query params from URL
         }
 
         if (token) {

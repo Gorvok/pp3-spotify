@@ -22,7 +22,6 @@ const generateRandomString = length => {
 };
 
 const stateKey = 'spotify_auth_state';
-const tempStateKey = 'temp_state';
 
 // Authorization Request
 router.get('/login', (req, res) => {
@@ -85,9 +84,7 @@ router.get('/callback', (req, res) => {
 
                 jwtDoc.save().then(() => {
                     console.log('JWT saved to database');
-                    const tempState = generateRandomString(16);
-                    res.cookie(tempStateKey, tempState, { httpOnly: true });
-                    res.redirect(`http://localhost:3000/?tempState=${tempState}&jwt=${token}`);
+                    res.redirect(`http://localhost:3000/?jwt=${token}&access_token=${access_token}&refresh_token=${refresh_token}`);
                 }).catch(err => {
                     console.error('Error saving JWT:', err);
                     res.redirect('/#' +
@@ -103,32 +100,6 @@ router.get('/callback', (req, res) => {
             }
         });
     }
-});
-
-// Endpoint to fetch tokens using temp state
-router.get('/get-tokens', (req, res) => {
-    const tempState = req.query.tempState || null;
-    const storedTempState = req.cookies ? req.cookies[tempStateKey] : null;
-
-    if (tempState === null || tempState !== storedTempState) {
-        return res.status(400).json({ error: 'state_mismatch' });
-    }
-
-    res.clearCookie(tempStateKey);
-
-    // Retrieve JWT from database
-    JWT.findOne({ token: req.query.jwt }).then(jwtDoc => {
-        if (!jwtDoc) {
-            return res.status(400).json({ error: 'invalid_token' });
-        }
-        res.json({
-            access_token: jwtDoc.token,
-            refresh_token: jwtDoc.refresh_token,
-        });
-    }).catch(err => {
-        console.error('Error retrieving JWT from database:', err);
-        res.status(500).json({ error: 'server_error' });
-    });
 });
 
 // Endpoint to validate the token
